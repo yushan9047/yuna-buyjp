@@ -3,98 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yuna 代購管理系統 v27</title>
+    <title>Yuna 代購管理系統 v28</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root { 
-            --primary: #e63946; /* 赤兔深紅 */
-            --accent: #f1faee; 
-            --success: #2a9d8f; 
-            --bg: #fffafb; /* 暖白背景 */
+            --primary: #e63946; 
+            --bg: #fffafb; 
             --card-bg: #ffffff;
             --text-main: #2b2d42;
             --text-sub: #8d99ae;
         }
         
-        body { font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; color: var(--text-main); line-height: 1.6; }
+        body { 
+            font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            color: var(--text-main); 
+            line-height: 1.6; 
+        }
         
         /* --- 標題與導覽 --- */
         .main-header { text-align: center; padding: 40px 0 20px 0; }
         .main-header h1 { margin: 0; font-size: 28px; font-weight: 800; color: var(--primary); letter-spacing: 2px; }
 
-        .header-bar { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; position: sticky; top: 0; background: var(--bg); padding: 15px 20px; z-index: 100; }
-        .header-bar h2 { margin: 0; font-size: 20px; font-weight: 700; color: var(--text-main); }
-        .back-btn { background: white; border: 1.5px solid #eee; padding: 10px 18px; border-radius: 50px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .back-btn:active { background: #f0f0f0; }
-
-        /* --- 首頁大按鈕 --- */
-        #homePage { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 20px; align-content: start; }
-        .main-btn { 
-            aspect-ratio: 1/1; border-radius: 28px; border: none; font-size: 18px; font-weight: bold; color: white; cursor: pointer; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08); transition: transform 0.2s;
+        .header-bar { 
+            display: flex; align-items: center; gap: 15px; margin-bottom: 25px; 
+            position: sticky; top: 0; background: var(--bg); padding: 15px 20px; z-index: 100; 
         }
-        .main-btn:active { transform: scale(0.96); }
-        .btn-add { background: #e63946; grid-column: span 2; aspect-ratio: auto; height: 110px; font-size: 24px; }
+        .header-bar h2 { margin: 0; font-size: 20px; font-weight: 700; }
+        .back-btn { 
+            background: white; border: 1.5px solid #eee; padding: 10px 18px; 
+            border-radius: 50px; font-size: 14px; font-weight: bold; cursor: pointer; 
+        }
+
+        /* --- 首頁按鈕 --- */
+        #homePage { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 20px; }
+        .main-btn { 
+            aspect-ratio: 1/1; border-radius: 28px; border: none; font-size: 18px; font-weight: bold; color: white; 
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); transition: 0.2s;
+        }
+        .main-btn:active { transform: scale(0.95); }
+        .btn-add { background: #e63946; grid-column: span 2; aspect-ratio: auto; height: 110px; font-size: 22px; }
         .btn-list { background: #457b9d; }
         .btn-pre { background: #2a9d8f; }
         .btn-cust { background: #2b2d42; grid-column: span 2; aspect-ratio: auto; height: 80px; }
         
-        /* --- 卡片與表單 --- */
-        .sub-page { display: none; padding: 0 20px 100px 20px; }
-        .sub-page.active { display: block; }
+        /* --- 核心：大圓角輸入框風格 --- */
         .card { 
-            background: var(--card-bg); padding: 24px; border-radius: 24px; 
-            box-shadow: 0 8px 30px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02);
+            background: var(--card-bg); padding: 25px; border-radius: 30px; 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.04); margin-bottom: 20px; 
         }
-        .form-group { margin-bottom: 18px; }
-        label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text-sub); }
+        .form-group { margin-bottom: 20px; }
+        label { 
+            display: block; font-size: 14px; font-weight: 700; margin-bottom: 10px; 
+            margin-left: 15px; color: var(--text-sub); 
+        }
         input { 
-            width: 100%; padding: 14px; border: 1.5px solid #f0f0f0; border-radius: 14px; 
-            box-sizing: border-box; font-size: 16px; background: #fdfdfd; transition: 0.3s;
+            width: 100%; padding: 16px 25px; border: 1px solid #f0f0f0; border-radius: 50px; 
+            box-sizing: border-box; font-size: 16px; background: #ffffff; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.3s ease;
         }
-        input:focus { outline: none; border-color: var(--primary); background: #fff; }
+        input:focus { 
+            outline: none; border-color: var(--primary); 
+            box-shadow: 0 5px 20px rgba(230,57,70,0.1); 
+        }
         
-        .btn-group { display: flex; gap: 10px; margin-bottom: 5px; }
+        /* --- 其他元件 --- */
+        .btn-group { display: flex; gap: 10px; }
         .btn-opt { 
-            flex: 1; padding: 12px; border: 1.5px solid #eee; border-radius: 14px; 
-            background: white; font-weight: bold; color: #555; cursor: pointer; transition: 0.3s;
+            flex: 1; padding: 14px; border: 1.5px solid #eee; border-radius: 50px; 
+            background: white; font-weight: bold; color: #555; cursor: pointer;
         }
-        .btn-opt.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 5px 15px rgba(230,57,70,0.3); }
+        .btn-opt.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 5px 15px rgba(230,57,70,0.2); }
         
         .submit-btn { 
             width: 100%; padding: 20px; background: var(--primary); color: white; border: none; 
-            border-radius: 18px; font-size: 18px; font-weight: bold; margin-top: 15px; cursor: pointer;
+            border-radius: 50px; font-size: 18px; font-weight: bold; margin-top: 15px; 
             box-shadow: 0 10px 20px rgba(230,57,70,0.2);
         }
 
-        /* --- 明細列表 --- */
         .item-row { 
-            background: white; padding: 18px; border-radius: 24px; margin-bottom: 15px; 
-            display: flex; gap: 15px; border: 1px solid rgba(0,0,0,0.03); align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            background: white; padding: 18px; border-radius: 25px; margin-bottom: 15px; 
+            display: flex; gap: 15px; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         }
-        .item-img { width: 90px; height: 90px; object-fit: cover; border-radius: 18px; background: #f8f8f8; flex-shrink: 0; cursor: pointer; }
-        .item-info { flex: 1; min-width: 0; }
-        .editable-field { border-bottom: 1.5px dashed #ccc; cursor: pointer; color: var(--text-main); font-weight: 700; }
-        .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0; }
-        .price-tag { background: #fcfcfc; padding: 8px; border-radius: 12px; font-size: 13px; border: 1px solid #f5f5f5; }
-        .price-label { font-size: 11px; color: var(--text-sub); display: block; margin-bottom: 2px; }
-        
-        .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-        .tag { background: #f0f0f0; padding: 5px 12px; border-radius: 50px; font-size: 12px; color: #666; font-weight: bold; border: 1px solid transparent; }
+        .item-img { width: 85px; height: 85px; object-fit: cover; border-radius: 20px; background: #f8f8f8; }
+        .price-tag { background: #fcfcfc; padding: 8px 12px; border-radius: 15px; font-size: 13px; border: 1px solid #f5f5f5; }
+        .tag { background: #f0f0f0; padding: 5px 12px; border-radius: 50px; font-size: 11px; color: #666; font-weight: bold; }
         .tag-active { background: #fff1f2; color: var(--primary); border-color: #ffe4e6; }
         
-        /* --- 彈出層 --- */
         .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:flex-end; }
-        .modal-content { background:white; padding:25px; border-radius:32px 32px 0 0; width:100%; max-height:80vh; overflow-y:auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); }
-        .modal-title { font-weight: 800; font-size: 20px; margin-bottom: 20px; text-align: center; color: var(--text-main); }
-        .modal-btn { display:block; width:100%; padding:18px; margin:10px 0; border:1px solid #f0f0f0; border-radius:18px; font-size:16px; font-weight:bold; background:#fff; text-align: center; transition: 0.2s; }
-        .modal-btn:active { background: #f8f8f8; }
-
-        .img-tip { font-size: 10px; color: var(--text-sub); text-align: center; display: block; margin-top: 5px; }
+        .modal-content { background:white; padding:30px; border-radius:35px 35px 0 0; width:100%; }
+        .modal-btn { display:block; width:100%; padding:18px; margin:10px 0; border:1px solid #f0f0f0; border-radius:50px; font-size:16px; font-weight:bold; background:#fff; text-align: center; }
     </style>
 </head>
 <body>
@@ -103,14 +105,14 @@
 
     <div id="selectorModal" class="modal-overlay" onclick="if(event.target === this) closeModal()">
         <div class="modal-content">
-            <div class="modal-title" id="modalTitle">選擇項目</div>
+            <div class="modal-title" id="modalTitle" style="text-align:center; font-weight:bold; margin-bottom:20px;">選擇項目</div>
             <div id="modalOptions"></div>
-            <button onclick="closeModal()" style="margin-top:10px; border:none; background:none; color:#aaa; width:100%; padding:10px; font-weight:bold;">關閉視窗</button>
+            <button onclick="closeModal()" style="margin-top:10px; border:none; background:none; color:#aaa; width:100%; padding:10px; font-weight:bold;">取消</button>
         </div>
     </div>
 
     <div id="homePage">
-        <div class="main-header" style="grid-column: span 2;"><h1>Yuna Select</h1><p style="color:#8d99ae; font-size:12px; margin-top:5px; font-weight:bold; letter-spacing:1px;">MANAGEMENT SYSTEM</p></div>
+        <div class="main-header" style="grid-column: span 2;"><h1>Yuna Select</h1></div>
         <button class="main-btn btn-add" onclick="showPage('part1')"><span>＋ 新增現場採購</span></button>
         <button class="main-btn btn-list" onclick="showPage('part2')">📋 採購明細</button>
         <button class="main-btn btn-pre" onclick="showPage('part4')">📝 預購商品</button>
@@ -118,18 +120,18 @@
     </div>
 
     <div id="part1" class="sub-page">
-        <div class="header-bar"><button class="back-btn" onclick="showPage('home')">←</button><h2>新增採購項目</h2></div>
+        <div class="header-bar"><button class="back-btn" onclick="showPage('home')">←</button><h2>新增採購</h2></div>
         <div class="card">
-            <div class="form-group"><label>📷 拍攝照片</label><input type="file" id="pImg" accept="image/*"></div>
-            <div class="form-group"><label>📦 商品品名</label><input type="text" id="pName" placeholder="請輸入品名"></div>
+            <div class="form-group"><label>📷 商品照片</label><input type="file" id="pImg" accept="image/*"></div>
+            <div class="form-group"><label>📦 商品名稱</label><input type="text" id="pName" placeholder="請輸入品名"></div>
             <div style="display:flex; gap:12px;">
-                <div class="form-group" style="flex:1"><label>💴 本幣單價</label><input type="number" id="pPriceN" placeholder="0"></div>
+                <div class="form-group" style="flex:1"><label>💴 未稅單價</label><input type="number" id="pPriceN" placeholder="0"></div>
                 <div class="form-group" style="flex:1"><label>💰 含稅成本</label><input type="number" id="pPriceTax" placeholder="0"></div>
             </div>
-            <div class="form-group"><label>💎 販售價格 (TWD/JPY)</label><input type="number" id="pPriceSell" placeholder="0"></div>
+            <div class="form-group"><label>💎 販售價格</label><input type="number" id="pPriceSell" placeholder="0"></div>
             <div style="display:flex; gap:12px;">
                 <div class="form-group" style="flex:1"><label>🔢 數量</label><input type="number" id="pQty" value="1"></div>
-                <div class="form-group" style="flex:1"><label>📍 購買地點</label><input type="text" id="pLoc" placeholder="百貨/商店名"></div>
+                <div class="form-group" style="flex:1"><label>📍 購買地點</label><input type="text" id="pLoc" placeholder="地點"></div>
             </div>
             <div class="form-group"><label>👤 顧客姓名</label><input type="text" id="pCustomer" placeholder="客人暱稱"></div>
             <div class="form-group">
@@ -140,8 +142,8 @@
                     <button class="btn-opt" onclick="setBuyer('Cupid', this)">Cupid</button>
                 </div>
                 <input type="hidden" id="pBuyer">
-                <div id="rayCardOptions" style="display:none; background:#fff1f2; padding:15px; border-radius:18px; margin-top:12px; border: 1px solid #ffe4e6;">
-                    <label style="color:var(--primary); font-size:12px;">💳 使用卡片</label>
+                <div id="rayCardOptions" style="display:none; background:#fff1f2; padding:15px; border-radius:25px; margin-top:15px;">
+                    <label style="color:var(--primary);">💳 使用卡片</label>
                     <div style="display:flex; gap:8px;">
                         <button class="btn-opt" onclick="setRayCard('na爸卡', this)">na爸卡</button>
                         <button class="btn-opt" onclick="setRayCard('ray卡', this)">ray卡</button>
@@ -149,37 +151,28 @@
                     <input type="hidden" id="pRayCard">
                 </div>
             </div>
-            <button class="submit-btn" onclick="saveData()">確認儲存項目</button>
+            <button class="submit-btn" onclick="saveData()">確認儲存</button>
         </div>
     </div>
 
-    <div id="part2" class="sub-page"><div class="header-bar"><button class="back-btn" onclick="showPage('home')">←</button><h2>採購明細紀錄</h2></div><div id="allList"></div></div>
+    <div id="part2" class="sub-page"><div class="header-bar"><button class="back-btn" onclick="showPage('home')">←</button><h2>採購明細</h2></div><div id="allList"></div></div>
     
-    <div id="part3" class="sub-page">
-        <div class="header-bar"><button class="back-btn" onclick="showPage('home')">←</button><h2>對帳統計</h2></div>
-        <button onclick="exportToExcel()" style="width:100%; background:#2b2d42; color:white; border:none; padding:18px; border-radius:18px; margin-bottom:20px; font-weight:bold; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">📊 匯出對帳 Excel</button>
-        <div id="customerList"></div>
-    </div>
+    <div id="part3" class="sub-page"><div class="header-bar"><button class="back-btn" onclick="showPage('home')">←</button><h2>對帳統計</h2></div><button onclick="exportToExcel()" class="submit-btn" style="background:#2b2d42;">📊 匯出 Excel</button><div id="customerList"></div></div>
 
     <div id="part4" class="sub-page">
         <div class="header-bar"><button class="back-btn" onclick="showPage('home')">←</button><h2>預購清單</h2></div>
         <div class="card">
-            <h4 style="margin:0 0 15px 0; color:var(--primary);">＋ 新增預購項目</h4>
             <div class="form-group"><label>📷 參考照片</label><input type="file" id="preImg" accept="image/*"></div>
             <div class="form-group"><label>📦 商品名稱</label><input type="text" id="preName" placeholder="名稱"></div>
             <div class="form-group"><label>👤 顧客姓名</label><input type="text" id="preCust" placeholder="客名"></div>
-            <div style="display:flex; gap:12px;">
-                <div class="form-group" style="flex:1"><label>🔢 數量</label><input type="number" id="preQty" value="1"></div>
-                <div class="form-group" style="flex:1"><label>💴 預估成本</label><input type="number" id="preBuyPrice" placeholder="0"></div>
-            </div>
-            <div class="form-group"><label>💰 預約售價</label><input type="number" id="preSellPrice" placeholder="0"></div>
-            <button class="submit-btn" style="background:#2a9d8f; box-shadow: 0 10px 20px rgba(42,157,143,0.2);" onclick="savePreOrder()">儲存至預購清單</button>
+            <div style="display:flex; gap:12px;"><input type="number" id="preQty" value="1" placeholder="數量"><input type="number" id="preBuyPrice" placeholder="成本"></div>
+            <input type="number" id="preSellPrice" placeholder="售價" style="margin-top:10px;">
+            <button class="submit-btn" style="background:#2a9d8f;" onclick="savePreOrder()">儲存預購</button>
         </div>
         <div id="preOrderList"></div>
     </div>
 
     <script>
-        // 保持原本的 Firebase 設定與邏輯不變
         const firebaseConfig = {
             apiKey: "AIzaSyBxy3g2MS18oJdE2v-JAZ9VWXZwZQ9W4yM",
             databaseURL: "https://yunabuy-cf20c-default-rtdb.firebaseio.com/",
@@ -206,6 +199,7 @@
             btn.classList.add('active');
             document.getElementById('rayCardOptions').style.display = (name === 'Ray') ? 'block' : 'none';
         }
+
         function setRayCard(card, btn) {
             document.getElementById('pRayCard').value = card;
             document.querySelectorAll('#rayCardOptions .btn-opt').forEach(b => b.classList.remove('active'));
@@ -220,23 +214,6 @@
         function handlePick(val) { if(activePickerCallback) activePickerCallback(val); closeModal(); }
         function closeModal() { document.getElementById('selectorModal').style.display = 'none'; activePickerCallback = null; }
 
-        function triggerImgEdit(refType, id) {
-            const input = document.getElementById('editImgInput');
-            input.onchange = async (e) => {
-                const file = e.target.files[0];
-                if(!file) return;
-                const base64 = await new Promise(res => {
-                    const reader = new FileReader();
-                    reader.onload = ev => res(ev.target.result);
-                    reader.readAsDataURL(file);
-                });
-                const ref = (refType === 'buy') ? dataRef : preRef;
-                ref.child(id).update({ img: base64 });
-                input.value = "";
-            };
-            input.click();
-        }
-
         async function saveData() {
             const file = document.getElementById('pImg').files[0];
             let base64 = "";
@@ -249,10 +226,7 @@
                 cardInfo: document.getElementById('pBuyer').value === 'Ray' ? (document.getElementById('pRayCard').value || "") : "",
                 img: base64, time: new Date().toLocaleString()
             });
-            ['pName','pPriceN','pPriceTax','pPriceSell','pLoc','pCustomer','pImg','pQty'].forEach(id=> {
-                let el = document.getElementById(id);
-                if(el) el.value = (id === 'pQty' ? '1' : '');
-            });
+            ['pName','pPriceN','pPriceTax','pPriceSell','pLoc','pCustomer','pImg'].forEach(id=> { if(document.getElementById(id)) document.getElementById(id).value = ''; });
             showPage('home');
         }
 
@@ -266,71 +240,44 @@
                 buyPrice: document.getElementById('preBuyPrice').value || "0", sellPrice: document.getElementById('preSellPrice').value || "0",
                 isBought: false, img: base64, time: new Date().toLocaleString()
             });
-            ['preName','preCust','preBuyPrice','preSellPrice','preImg','preQty'].forEach(id=> {
-                let el = document.getElementById(id);
-                if(el) el.value = (id === 'preQty' ? '1' : '');
-            });
+            ['preName','preCust','preBuyPrice','preSellPrice','preImg'].forEach(id=> { if(document.getElementById(id)) document.getElementById(id).value = ''; });
         }
 
         dataRef.on('value', snap => { rawData = snap.val() || {}; renderLists(); });
         preRef.on('value', snap => { rawPre = snap.val() || {}; renderLists(); });
 
-        function editInList(id, field, current) {
-            if(field === 'buyer') { openPicker("選擇買手", ['Ray', 'Nana', 'Cupid'], (val) => { let up = {buyer: val}; if(val !== 'Ray') up.cardInfo = ""; dataRef.child(id).update(up); }); }
-            else if(field === 'cardInfo') { openPicker("選擇卡片", ['na爸卡', 'ray卡'], (val) => { dataRef.child(id).update({cardInfo: val}); }); }
-            else { let v = prompt(`修改 ${field}:`, current); if(v !== null) { let up = {}; up[field] = v; dataRef.child(id).update(up); } }
-        }
-
-        function editPreOrder(id, field, current) {
-            let v = prompt(`修改預購 ${field}:`, current); if(v !== null) { let up = {}; up[field] = v; preRef.child(id).update(up); }
-        }
-
         function renderLists() {
             const buyArr = Object.entries(rawData).map(([id, val]) => ({ id, ...val })).reverse();
             document.getElementById('allList').innerHTML = buyArr.map(i => `
                 <div class="item-row">
-                    <div onclick="triggerImgEdit('buy', '${i.id}')">
-                        <img src="${i.img || ''}" class="item-img">
-                        <span class="img-tip">更換照片</span>
-                    </div>
-                    <div class="item-info">
-                        <div><span class="editable-field" onclick="editInList('${i.id}','name','${i.name}')">${i.name}</span></div>
-                        <div class="price-grid">
-                            <div class="price-tag"><span class="price-label">含稅成本</span>¥ <span class="editable-field" onclick="editInList('${i.id}','priceTax','${i.priceTax}')">${i.priceTax}</span></div>
-                            <div class="price-tag"><span class="price-label">💰 售價</span>¥ <span class="editable-field" onclick="editInList('${i.id}','priceSell','${i.priceSell}')">${i.priceSell}</span></div>
+                    <img src="${i.img || ''}" class="item-img">
+                    <div style="flex:1">
+                        <div style="font-weight:bold">${i.name}</div>
+                        <div style="display:flex; gap:5px; margin:5px 0;">
+                            <span class="price-tag">成本 ¥${i.priceTax}</span>
+                            <span class="price-tag" style="color:var(--primary)">售 ¥${i.priceSell}</span>
                         </div>
-                        <div class="tag-row">
-                            <span class="tag tag-active" onclick="editInList('${i.id}','qty','${i.qty}')">x ${i.qty || 1}</span>
-                            <span class="tag tag-active" onclick="editInList('${i.id}','customer','${i.customer}')">👤 ${i.customer}</span>
-                            <span class="tag" onclick="editInList('${i.id}','loc','${i.loc}')">📍 ${i.loc}</span>
-                            <span class="tag tag-active" onclick="editInList('${i.id}','buyer','${i.buyer}')">🧤 ${i.buyer}</span>
-                            ${i.buyer === 'Ray' ? `<span class="tag tag-active" onclick="editInList('${i.id}','cardInfo','${i.cardInfo}')">💳 ${i.cardInfo || '選卡'}</span>` : ''}
+                        <div style="display:flex; flex-wrap:wrap; gap:5px;">
+                            <span class="tag tag-active">👤 ${i.customer}</span>
+                            <span class="tag">x${i.qty}</span>
+                            <span class="tag tag-active">🧤 ${i.buyer}</span>
                         </div>
                     </div>
-                    <button onclick="if(confirm('確定刪除？')) dataRef.child('${i.id}').remove()" style="border:none;background:none;color:#ddd;padding:10px;">✕</button>
+                    <button onclick="if(confirm('刪除？')) dataRef.child('${i.id}').remove()" style="border:none;background:none;color:#ddd;">✕</button>
                 </div>
             `).join('');
 
             const preArr = Object.entries(rawPre).map(([id, val]) => ({ id, ...val })).reverse();
             document.getElementById('preOrderList').innerHTML = preArr.map(i => `
                 <div class="item-row" style="border-left: 6px solid ${i.isBought ? '#2ecc71' : '#eee'}">
-                    <div onclick="triggerImgEdit('pre', '${i.id}')">
-                        <img src="${i.img || ''}" class="item-img">
-                        <span class="img-tip">更換照片</span>
-                    </div>
-                    <div class="item-info">
-                        <div><span class="editable-field" onclick="editPreOrder('${i.id}','name','${i.name}')">${i.name}</span></div>
-                        <div class="price-grid">
-                            <div class="price-tag"><span class="price-label">估算成本</span>¥ <span class="editable-field" onclick="editPreOrder('${i.id}','buyPrice','${i.buyPrice}')">${i.buyPrice}</span></div>
-                            <div class="price-tag"><span class="price-label">預約售價</span>¥ <span class="editable-field" onclick="editPreOrder('${i.id}','sellPrice','${i.sellPrice}')">${i.sellPrice}</span></div>
-                        </div>
-                        <div style="margin-top:5px">
-                            <span class="tag tag-active" onclick="editPreOrder('${i.id}','qty','${i.qty}')">x ${i.qty || 1}</span>
-                            <span class="tag tag-active" onclick="editPreOrder('${i.id}','customer','${i.customer}')">👤 ${i.customer}</span>
-                            <span class="tag ${i.isBought ? 'tag-active' : ''}" onclick="preRef.child('${i.id}').update({isBought: ${!i.isBought}})">${i.isBought ? '● 已採購' : '○ 缺貨中'}</span>
+                    <img src="${i.img || ''}" class="item-img">
+                    <div style="flex:1">
+                        <div style="font-weight:bold">${i.name}</div>
+                        <div class="tag-row" style="margin-top:5px;">
+                            <span class="tag tag-active">👤 ${i.customer}</span>
+                            <span class="tag" onclick="preRef.child('${i.id}').update({isBought: ${!i.isBought}})">${i.isBought ? '● 已買' : '○ 缺貨'}</span>
                         </div>
                     </div>
-                    <button onclick="if(confirm('刪除？')) preRef.child('${i.id}').remove()" style="border:none;background:none;color:#ddd">✕</button>
                 </div>
             `).join('');
             renderSummary(buyArr, preArr);
@@ -344,28 +291,22 @@
                 const bTotal = groups[c].buy.reduce((s, n) => s + (parseFloat(n.priceSell)*(parseInt(n.qty)||1)), 0);
                 const pTotal = groups[c].pre.reduce((s, n) => s + (n.isBought ? (parseFloat(n.sellPrice)*(parseInt(n.qty)||1)) : 0), 0);
                 return `<div class="card">
-                    <div style="font-weight:bold; display:flex; justify-content:space-between; border-bottom:1px solid #f0f0f0; padding-bottom:15px; margin-bottom:15px;">
-                        <span>👤 ${c}</span>
-                        <span style="color:var(--primary); font-size:18px;">¥ ${bTotal + pTotal}</span>
+                    <div style="font-weight:bold; display:flex; justify-content:space-between; border-bottom:1px solid #f0f0f0; padding-bottom:10px; margin-bottom:10px;">
+                        <span>👤 ${c}</span><span style="color:var(--primary)">¥ ${bTotal + pTotal}</span>
                     </div>
-                    <div style="font-size:13px; line-height:1.8; color:#555;">
-                        ${groups[c].buy.map(p => `<div style="display:flex; justify-content:space-between;"><span>• ${p.name} (x${p.qty || 1})</span><span>¥${p.priceSell}</span></div>`).join('')}
-                        ${groups[c].pre.map(p => {
-                            const statusLabel = p.isBought ? '<span style="color:#2a9d8f;">[已買]</span>' : '<span style="color:#8d99ae;">[缺]</span>';
-                            return `<div style="display:flex; justify-content:space-between;"><span>• ${statusLabel} ${p.name} (x${p.qty || 1})</span><span>${p.isBought ? '¥'+p.sellPrice : '<strike>¥'+p.sellPrice+'</strike>'}</span></div>`;
-                        }).join('')}
+                    <div style="font-size:12px; color:#666;">
+                        ${groups[c].buy.map(p => `• ${p.name} (x${p.qty}) - ¥${p.priceSell}`).join('<br>')}
                     </div>
                 </div>`;
             }).join('');
         }
 
         function exportToExcel() {
-            const d = Object.values(rawData).map(i => ({ "類型": "現場", "顧客": i.customer, "品名": i.name, "數量": i.qty, "售價": i.priceSell, "成本": i.priceTax }));
-            const p = Object.values(rawPre).map(i => ({ "類型": "預購", "顧客": i.customer, "品名": i.name, "數量": i.qty, "售價": i.sellPrice, "狀態": i.isBought ? "已買" : "缺" }));
-            const ws = XLSX.utils.json_to_sheet([...d, ...p]);
+            const d = Object.values(rawData).map(i => ({ "顧客": i.customer, "品名": i.name, "數量": i.qty, "售價": i.priceSell }));
+            const ws = XLSX.utils.json_to_sheet(d);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "對帳單");
-            XLSX.writeFile(wb, `Yuna對帳單_${new Date().toLocaleDateString()}.xlsx`);
+            XLSX.writeFile(wb, `Yuna對帳_${new Date().toLocaleDateString()}.xlsx`);
         }
     </script>
 </body>
